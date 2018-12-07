@@ -19,10 +19,11 @@ public class S3FileUploaderService implements Runnable {
 	private final String targetDynamoTable;
 	private final Message message;
 	private final String s3FileName;
+	private final Region region;
 
 	public S3FileUploaderService(SQSMessaginRepository sqsMessaginRepository,
 			SNSMessagingRepository snsMessagingRepository, DynamoRepository dynamoRepository, String queueName,
-			String topicArn, String bucketName, String tableToWrite, Message message, String s3FileName) {
+			String topicArn, String bucketName, String tableToWrite, Message message, String s3FileName, Region region) {
 		this.sqsMessaginRepository = sqsMessaginRepository;
 		this.dynamoRepository = dynamoRepository;
 		this.snsMessagingRepository = snsMessagingRepository;
@@ -32,11 +33,12 @@ public class S3FileUploaderService implements Runnable {
 		this.targetDynamoTable = tableToWrite;
 		this.message = message;
 		this.s3FileName = s3FileName;
+		this.region = region;
 	}
 
 	@Override
 	public void run() {						
-		dynamoRepository.putItemReadingFromS3(targetDynamoTable, sourceBucketName, Region.AP_SOUTH_1, s3FileName);
+		dynamoRepository.putItemReadingFromS3(targetDynamoTable, sourceBucketName, region, s3FileName);
 		snsMessagingRepository.pusblishToSNS(targetTopicARN, message.body());
 		sqsMessaginRepository.deleteMessage(sourceQueueName, message);
 		System.out.println("Thread completed " + Thread.currentThread().getName());

@@ -99,6 +99,7 @@ public class SQSMessaginRepository {
 	
 	public void deleteMessage(String queueName, Message message) {
 		queueName = queueName == null ? QUEUE_NAME : queueName;
+		System.out.println("Deleting messages from queue");
 
 		SqsClient sqs = SqsClient.builder().build();
 
@@ -106,8 +107,9 @@ public class SQSMessaginRepository {
 		String queueUrl = sqs.getQueueUrl(getQueueRequest).queueUrl();
 		DeleteMessageRequest deleteRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
 				.receiptHandle(message.receiptHandle()).build();
-		System.out.println("Deleting messages from queue");
 		sqs.deleteMessage(deleteRequest);
+		System.out.println("Messages deleted from queue");
+
 		
 	}
 

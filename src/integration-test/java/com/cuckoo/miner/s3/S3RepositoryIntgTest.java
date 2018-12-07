@@ -12,16 +12,20 @@ public class S3RepositoryIntgTest {
 	private S3Repository s3Repository;
 
 	String tableName = "";
+	
+    public static Region region = Region.of("us-east-1");
 
 	@Before
 	public void init() {
 		s3Repository = new S3Repository();
+		region = Region.of("us-east-1");
+		
 	}
 
 	@Test
 	public void shouldReadDataFromBucket() {
-		s3Repository.readBucketByFile1("resultsclientrepository", Region.AP_SOUTH_1, "results.csv");
-		System.out.println();
+//		s3Repository.readBucketByFile1("resultsclientrepository", region, "results.csv");
+//		System.out.println();
 	}
 
 }

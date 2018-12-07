@@ -23,41 +23,35 @@ public class SNSMessagingRepository {
 		topicName = topicName == null ? TOPIC_NAME : topicName;
 		SnsClient snsClient = SnsClient.builder().build();
 		CreateTopicRequest request = CreateTopicRequest.builder().name(topicName).build();
-		CreateTopicResponse createTopicResult = snsClient.createTopic(request);	
+		CreateTopicResponse createTopicResult = snsClient.createTopic(request);
 		return createTopicResult.topicArn();
-		
+
 	}
-	
-	
+
 	public void deleteTopic(String topicArn) {
 		SnsClient snsClient = SnsClient.builder().build();
 		DeleteTopicRequest deleteTopicRequest = DeleteTopicRequest.builder().topicArn(topicArn).build();
 		snsClient.deleteTopic(deleteTopicRequest);
 	}
-	
-	
-	//----------  delete
+
+	// ---------- delete
 	public void subscribeToTopic(String topicArn, String email) {
-		
+
 //		SubscribeRequest subRequest = new SubscribeRequest(topicArn, "email", email);
 //		snsClient.subscribe(subRequest);
 	}
-	
+
 	public void pusblishToSNS(String topicArn, String message) {
-		//publish to an SNS topic
+		System.out.println("Publishing messages to SNS arn is : " + topicArn);
 		SnsClient snsClient = SnsClient.builder().build();
-		PublishRequest publishRequest  = PublishRequest.builder().topicArn(topicArn).message(message).build();
+		PublishRequest publishRequest = PublishRequest.builder().topicArn(topicArn).message(message).build();
 		PublishResponse publish = snsClient.publish(publishRequest);
+		System.out.println("Message published to SNS arn is : " + topicArn);
 	}
 
-	public void sendMessageToSQS(String topicName, String message) {
-		topicName = topicName == null ? TOPIC_NAME : topicName;
-		if (message == null) {
-			message = "hello world";
-		}
+	public void sendMessageToSQS(String topicArn, String message) {
 		SnsClient snsClient = SnsClient.builder().build();
-
-		GetTopicAttributesRequest getTopicAttributesRequest = GetTopicAttributesRequest.builder().topicArn("").build();
+		GetTopicAttributesRequest getTopicAttributesRequest = GetTopicAttributesRequest.builder().topicArn(topicArn).build();
 
 	}
 
@@ -79,7 +73,8 @@ public class SNSMessagingRepository {
 		return null;
 	}
 
-	public void deleteQueue(String queueName) {}
+	public void deleteQueue(String queueName) {
+	}
 
 	public List<String> deleteQueueWithPrefix(String queuePrefix) {
 

@@ -15,6 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.model.Message;
 
 @Service
@@ -37,6 +38,8 @@ public class SQSNotificaitonService {
 		int sourcePollingThreadPoolCount = Integer
 				.valueOf(environment.getProperty("sourcepolling.threadpool.count", "20"));
 
+	     Region region = Region.of(environment.getProperty("aws.region"));
+
 		while (true) {
 
 			ExecutorService executor = Executors.newFixedThreadPool(sourcePollingThreadPoolCount);
@@ -50,17 +53,21 @@ public class SQSNotificaitonService {
 					JsonElement jsonElement = jsonObject.get("fileName");
 					if (jsonElement != null && jsonElement.getAsString() != null) {
 						String s3FileName = jsonElement.getAsString();
+						System.out.println("File to be read from S3 is"+s3FileName);
 						S3FileUploaderService sqsNotificationProcessor = new S3FileUploaderService(
 								sqsMessaginRepository, snsMessagingRepository, dynamoRepository, sourceQueueName,
-								targetTopicARN, sourceBucketName, targetDynamoTable, message, s3FileName);
+								targetTopicARN, sourceBucketName, targetDynamoTable, message, s3FileName, region);
 						executor.submit(sqsNotificationProcessor);
 						executor.shutdown();
 						while (!executor.isTerminated()) {
 						}
 						System.out.println("A thread finished");
+					}else {
+						System.out.println("No fileName Key found in SQS");
 					}
 				}
-				Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+				int timeToPuase = Integer.parseInt(environment.getProperty("sourcepolling.timetopuase"));
+				Thread.sleep(TimeUnit.SECONDS.toMillis(timeToPuase));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (Exception e) {

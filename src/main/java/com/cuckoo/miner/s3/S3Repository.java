@@ -25,27 +25,22 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 public class S3Repository {
 
 	private S3Client getS3Client(Region region) {
-		region = region == null ? Region.AP_SOUTH_1 : region;
 		S3Client s3 = S3Client.builder().region(region).build();
 		return s3;
 	}
 
 	public void createBucket(String bucket, Region region) {
-		region = region == null ? Region.AP_SOUTH_1 : region;
 		getS3Client(region).createBucket(CreateBucketRequest.builder().bucket(bucket)
 				.createBucketConfiguration(CreateBucketConfiguration.builder().locationConstraint(region.id()).build())
 				.build());
 	}
 
 	public void deleteBucket(String bucket, Region region) {
-		region = region == null ? Region.AP_SOUTH_1 : region;
-
 		DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucket).build();
 		getS3Client(region).deleteBucket(deleteBucketRequest);
 	}
 
 	public void readBucketByFile(String bucket, Region region, String fileNameToRead) {
-		region = region == null ? Region.AP_SOUTH_1 : region;
 		S3Client s3 = getS3Client(region);
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(fileNameToRead).build();
 		ResponseInputStream<GetObjectResponse> object = s3.getObject(getObjectRequest);
@@ -66,7 +61,6 @@ public class S3Repository {
 	}
 
 	public void readBucketByFile1(String bucket, Region region, String fileNameToRead) {
-		region = region == null ? Region.AP_SOUTH_1 : region;
 		S3Client s3 = S3Client.builder().region(region).build();
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(fileNameToRead).build();
 		ResponseInputStream<GetObjectResponse> object = s3.getObject(getObjectRequest);
